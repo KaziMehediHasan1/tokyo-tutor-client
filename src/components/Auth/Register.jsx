@@ -1,19 +1,42 @@
-import React from "react";
-
+import axios from "axios";
+import { toast } from "react-toastify";
+const image_hosting_key = import.meta.env.VITE_IMGBB_APIKEY;
+const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 const Register = () => {
-  //** Register Form Handler **/
-  const handleSubmit = (e) => {
+  //** REGISTER FORM HANDLER **/
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const name = e.target.name.value;
     const password = e.target.password.value;
-    const photo = e.target.photo.value;
+    const photo = e.target.photo.files[0];
     const email = e.target.email.value;
-    console.log({
+
+    // IMAGE UPLOAD IN IMGBB
+    const formData = new FormData();
+    formData.append("image", photo);
+    const res = await axios.post(image_hosting_api, formData, {
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    });
+
+    const user = {
       name,
       password,
-      photo,
+      photo: res?.data?.data?.url,
       email,
-    });
+    };
+    console.log(user, "from 34 no line");
+    const data = await axios.post(
+      `${import.meta.env.VITE_SEVER_PORT}/user`,
+      user
+    );
+    console.log(data.data, "29 no line");
+    if (data.data.users) {
+      toast.success("User Register Succesfull ");
+    } else {
+      toast.error("Register Faield ");
+    }
   };
   return (
     <div className=" w-[440px] py-20  mx-auto">
