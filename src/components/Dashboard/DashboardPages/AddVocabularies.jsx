@@ -1,27 +1,34 @@
 import axios from "axios";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 const AddVocabularies = () => {
+  const { email: creator } = useSelector((state) => state.auth);
   // VOCABULARY ADD HANDLER
   const handleAddVoca = async (e) => {
     e.preventDefault();
     const word = e.target.word.value;
     const pronunciation = e.target.pronunciation.value;
+    const meaning = e.target.meaning.value;
     const Description = e.target.Description.value;
     const lessonNo = e.target.lessonNo.value;
     const addVoca = {
       word,
       pronunciation,
-      Description,
+      meaning,
       lessonNo,
+      Description,
+      creator,
     };
 
-    const res = await axios.patch(
-      `${import.meta.env.VITE_SEVER_PORT}/add-voca`,
+    const res = await axios.post(
+      `${import.meta.env.VITE_SEVER_PORT}/newVoca`,
       addVoca
     );
     if (res.data) {
       toast.success("Vocabulary successfully add");
+    } else {
+      toast.error("Vocabulary not added successfully");
     }
     console.log(res.data);
     console.log(addVoca);
@@ -50,10 +57,10 @@ const AddVocabularies = () => {
           />
         </div>
         <div className="flex flex-col space-y-3">
-          <label htmlFor="Description">Description</label>
+          <label htmlFor="meaning">Meaning</label>
           <input
             type="text"
-            name="Description"
+            name="meaning"
             className="py-2 ring-1 border rounded"
           />
         </div>
@@ -63,6 +70,14 @@ const AddVocabularies = () => {
             type="text"
             name="lessonNo"
             className="py-2 ring-1 border rounded"
+          />
+        </div>
+        <div className="flex flex-col space-y-3">
+          <label htmlFor="Description">Description</label>
+          <input
+            type="text"
+            name="Description"
+            className="py-2 ring-1 border rounded w-full col-span-2"
           />
         </div>
         <button className="w-full btn col-span-2 text-xl">Submit</button>

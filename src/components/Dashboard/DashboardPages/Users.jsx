@@ -1,17 +1,65 @@
 import axios from "axios";
 import useGetUsers from "../../Hooks/useGetUsers";
+import Swal from "sweetalert2";
 
 const Users = () => {
   // get all user and show user in this table.
   const [allUser, isLoading, refetch] = useGetUsers();
-  console.log(allUser.users);
   const handlePromote = async (id, role) => {
     console.log(id, role);
-    const res = await axios.patch(
-      `${import.meta.env.VITE_SEVER_PORT}/promote`,
-      { id, role }
-    );
-    console.log(res.data);
+    // ALERT
+
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons
+      .fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, promote!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true,
+      })
+      .then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await axios.patch(
+              `${import.meta.env.VITE_SEVER_PORT}/promote`,
+              { id, role }
+            );
+
+            // Display success message if the PATCH request was successful
+            if (res.status === 200) {
+              refetch();
+              swalWithBootstrapButtons.fire({
+                title: "Promoted!",
+                text: "The user has been successfully promoted.",
+                icon: "success",
+              });
+            }
+          } catch (error) {
+            // Handle errors
+            swalWithBootstrapButtons.fire({
+              title: "Error!",
+              text: "Something went wrong. Please try again later.",
+              icon: "error",
+            });
+          }
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire({
+            title: "Cancelled",
+            text: "Operation cancelled. No changes made.",
+            icon: "error",
+          });
+        }
+      });
   };
   return (
     <div className="container p-2 mx-auto sm:p-4 dark:text-gray-800">

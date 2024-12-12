@@ -1,8 +1,11 @@
 import axios from "axios";
 import { RxUpdate } from "react-icons/rx";
 import { TiDeleteOutline } from "react-icons/ti";
+import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
 
 const AddLesson = () => {
+  const { email:creator } = useSelector((state) => state.auth);
   // ADD LESSON HANDLER
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -11,12 +14,18 @@ const AddLesson = () => {
     console.log(lessonName, lessonNo);
     const res = await axios.post(
       `${import.meta.env.VITE_SEVER_PORT}/add-lesson`,
-      { lessonName, lessonNo }
+      { lessonName, lessonNo, creator }
     );
     console.log(res.data);
 
     if (res.data) {
-      console.log(res.data, "bhitor theke");
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Your work has been saved",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     }
   };
   return (
