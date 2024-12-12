@@ -1,7 +1,10 @@
 import axios from "axios";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { login } from "../../redux/slice/slice";
 
 const Login = () => {
+  const dispatch = useDispatch();
   // HANDLE LOGIN
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -20,8 +23,10 @@ const Login = () => {
       email,
       password,
     });
-    console.log(res.data.user);
-    if (res.data) {
+
+    if (res.data.user) {
+      localStorage.setItem("token", res.data.token);
+      dispatch(login(res.data.user));
       toast.success("LogIn Successfull");
     } else {
       toast.error("incurrect credantials");
