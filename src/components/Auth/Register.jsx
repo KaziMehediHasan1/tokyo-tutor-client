@@ -31,7 +31,6 @@ const Register = () => {
       `${import.meta.env.VITE_SEVER_PORT}/user`,
       user
     );
-    console.log(data.data, "29 no line");
     if (data.data.users) {
       toast.success("User Register Succesfull ");
     } else {

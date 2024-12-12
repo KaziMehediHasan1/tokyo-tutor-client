@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 const DashboardBar = () => {
   return (
-    <div className="bg-slate-400 h-screen">
+    <div className="bg-slate-400 max-h-[1000px] min-h-svh">
       <div className="flex flex-col space-y-3 px-7 pt-5 ">
         <NavLink to="Dlesson" className="font-semibold text-white">
           Lesson
